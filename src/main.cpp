@@ -162,6 +162,21 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 	return {x,y};
 
 }
+// Function return x,y coordinate to run car in straight line
+vector<vector<double>> runCarInStrightLine(double car_x,double car_y,double car_yaw){
+    vector<double> next_x_vals;
+    vector<double> next_y_vals;
+    
+                double dist_inc = 0.5;
+                for(int i = 0; i < 50; i++)
+                {
+    
+                    next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
+                    next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
+                }
+    
+    return {next_x_vals,next_y_vals};
+}
 
 int main() {
   uWS::Hub h;
@@ -243,15 +258,19 @@ int main() {
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
 
-//            double dist_inc = 0.5;
-//            for(int i = 0; i < 50; i++)
-//            {
-//
-//                next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
-//                next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
-//            }
+           
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
+           /**
+            // Run car in stright line
+            vector<vector<double>> points = runCarInStrightLine(car_x, car_y, car_yaw);
+            next_x_vals=points[0];
+            next_y_vals=points[1];
+          
+            */
             
+            /**
+             // Run car in circular path
+             
             double pos_x;
             double pos_y;
             double angle;
@@ -262,7 +281,7 @@ int main() {
                 next_x_vals.push_back(previous_path_x[i]);
                 next_y_vals.push_back(previous_path_y[i]);
             }
-            
+
             if(path_size==0){
                 pos_x=car_x;
                 pos_y=car_y;
@@ -280,13 +299,25 @@ int main() {
                 cout<<"pos_y:::"<<pos_y<<endl;
                 cout<<"angle:::"<<angle<<endl;
             }
-            
+
              double dist_inc = 0.5;
             for (int i=0; i<50-path_size; i++) {
                 next_x_vals.push_back(pos_x+dist_inc*cos(angle+(i+1)*(pi()/100)));
                  next_y_vals.push_back(pos_y+dist_inc*sin(angle+(i+1)*(pi()/100)));
                 pos_x+=dist_inc*cos(angle+(i+1)*(pi()/100));
                 pos_y+=dist_inc*sin(angle+(i+1)*(pi()/100));
+
+            }
+            */
+            
+            // Run car in highway path
+             double dist_inc = 0.5;
+            for (int i=0; i<50; i++) {
+                double next_s=car_s+(i+1)*dist_inc;
+                double next_d=6;
+                vector<double> xy=getXY(next_s, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+                next_x_vals.push_back(xy[0]);
+                next_y_vals.push_back(xy[1]);
                 
             }
             
